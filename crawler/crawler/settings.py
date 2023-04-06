@@ -7,6 +7,8 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import os
+
 BOT_NAME = "crawler"
 
 SPIDER_MODULES = ["crawler.spiders"]
@@ -62,9 +64,13 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "crawler.pipelines.CrawlerPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   "crawler.pipelines.ImagesPipeline": 299,
+   "crawler.pipelines.DBPipeline": 300,
+}
+
+IMAGES_STORE = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..','media')
+
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

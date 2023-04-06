@@ -5,12 +5,19 @@ import argparse
 parser = argparse.ArgumentParser(
     prog='filmnet crawler'
 )
- 
+
+# Custom validator function to check if the value is a positive integer
+def positive_int(value):
+    ivalue = int(value)
+    if ivalue <= 0:
+        raise argparse.ArgumentTypeError("%s is not a positive integer" % value)
+    return ivalue
+
 parser.add_argument(
     '-c', '--count',
-    type=str,
+    type=positive_int,
     dest='film_count',
-    default='',
+    default=100,
     help='Number of movies to be crawled'
 )
 

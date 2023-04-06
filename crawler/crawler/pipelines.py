@@ -41,6 +41,6 @@ class ImagesPipeline(BaseImagesPipeline):
         return item
 
 
-# class CrawlerPipeline: 
-#     def process_item(self, item, spider):
-#         return item
+class DBPipeline: 
+    def process_item(self, item, spider):
+        return item
