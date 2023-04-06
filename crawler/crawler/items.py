@@ -6,21 +6,21 @@ class MovieItem(scrapy.Item):
     id = scrapy.Field()
     short_id = scrapy.Field()
     slug = scrapy.Field()
-    fa_title = scrapy.Field()
-    en_title = scrapy.Field()
+    title_fa = scrapy.Field()
+    title_en = scrapy.Field()
     summary = scrapy.Field()
-    publish_date = scrapy.Field()
+    published_at = scrapy.Field()
     release_year = scrapy.Field()
-    rate = scrapy.Field()
+    rate_percentage = scrapy.Field()
+    imdb_rank_percent = scrapy.Field()
     duration = scrapy.Field()
+    visits = scrapy.Field()
     
     # The url of the cover and poster image in the filmnet
-    cover_image_url = scrapy.Field()
-    poster_image_url = scrapy.Field()
+    image_urls = scrapy.Field()
     
     # The url of the downloaded poster and cover image
-    cover_image = scrapy.Field()
-    poster_image = scrapy.Field()
+    images = scrapy.Field()
     
     # List of the genres
     genres = scrapy.Field()
