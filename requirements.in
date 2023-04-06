@@ -1,0 +1,6 @@
+Scrapy
+Pillow
+django
+djangorestframework
+django-filter
+django-decouple
