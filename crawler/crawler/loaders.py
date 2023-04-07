@@ -6,12 +6,15 @@ from w3lib.html import remove_tags, remove_comments
 
 
 class MovieLoader(ItemLoader):
+    """
+    Custom item loader for MovieItem.
+    """
     
     default_item_class = MovieItem
     
     # Input processors
-    genres_in = get_genres
-    summary_in = MapCompose(remove_tags, remove_comments, remove_nbsp)
+    genres_in = get_genres  # Use the get_genres processor for 'genres' field
+    summary_in = MapCompose(remove_tags, remove_comments, remove_nbsp)  # Use multiple processors for 'summary' field
     
     # Output processors
     id_out = TakeFirst()

@@ -3,6 +3,7 @@ from core.models import Movie, Genre
 
 
 class GenreSerializer(serializers.HyperlinkedModelSerializer):
+    """Serializer for Genre model."""
         
     movie_count = serializers.ReadOnlyField(source='get_movie_count')
     filmnet_link = serializers.ReadOnlyField(source='get_filmnet_link')
@@ -15,8 +16,8 @@ class GenreSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
-
 class MovieSerializer(serializers.HyperlinkedModelSerializer):
+    """Serializer for Movie model."""
     
     genres = GenreSerializer(many=True)
     filmnet_link = serializers.ReadOnlyField(source='get_filmnet_link')
@@ -29,4 +30,3 @@ class MovieSerializer(serializers.HyperlinkedModelSerializer):
             'summary', 'genres', 'visits', 'rate_percentage', 'imdb_rank_percent',
             'published_at', 'filmnet_link'
         ]
-

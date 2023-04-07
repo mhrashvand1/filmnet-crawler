@@ -8,6 +8,9 @@ parser = argparse.ArgumentParser(
 
 # Custom validator function to check if the value is a positive integer
 def positive_int(value):
+    """
+    Custom validator function to check if the value is a positive integer.
+    """
     ivalue = int(value)
     if ivalue <= 0:
         raise argparse.ArgumentTypeError("%s is not a positive integer" % value)
@@ -22,7 +25,7 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-    
+
 process = CrawlerProcess(get_project_settings())
 process.crawl('filmnet', film_count=args.film_count)
 

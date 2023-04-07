@@ -3,7 +3,14 @@ from core.models import Movie, Genre
 
 
 class MovieFilter(filters.FilterSet):
+    """
+    Filter class for the Movie model.
+
+    Allows filtering based on published_at, release_year, rate_percentage,
+    imdb_rank_percent, visits, and duration fields.
+    """
     
+    # Define filter fields and their lookup expressions
     published_at__lt = filters.DateTimeFilter(field_name='published_at', lookup_expr='lt')
     published_at__gt = filters.DateTimeFilter(field_name='published_at', lookup_expr='gt')
 
@@ -32,7 +39,13 @@ class MovieFilter(filters.FilterSet):
 
 
 class GenreFilter(filters.FilterSet):
+    """
+    Filter class for the Genre model.
+
+    Allows filtering based on movie_count field.
+    """
     
+    # Define filter fields and their lookup expressions
     movie_count = filters.NumberFilter(field_name='movie_count')
     movie_count__lt = filters.NumberFilter(field_name='movie_count', lookup_expr='lt')
     movie_count__gt = filters.NumberFilter(field_name='movie_count', lookup_expr='gt')

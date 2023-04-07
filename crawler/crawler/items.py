@@ -2,7 +2,7 @@ import scrapy
 
 
 class MovieItem(scrapy.Item):
-    
+    # Fields representing movie data
     id = scrapy.Field()
     short_id = scrapy.Field()
     slug = scrapy.Field()
@@ -16,14 +16,16 @@ class MovieItem(scrapy.Item):
     duration = scrapy.Field()
     visits = scrapy.Field()
     
-    # The url of the cover and poster image in the filmnet
+    # Fields for movie images
+    # The URL of the cover and poster image in the filmnet
     image_urls = scrapy.Field()
-    
-    # The url of the downloaded poster and cover image
+    # The URL of the downloaded poster and cover image
     images = scrapy.Field()
     
-    # List of the genres
+    # Field for movie genres
+    # List of genres
     genres = scrapy.Field()
     
-    # filmnet_link: This field is a combination of slug and short_id and does not need to be taken separately, 
+    # Additional notes on fields
+    # filmnet_link: This field is a combination of slug and short_id and does not need to be taken separately,
     # but this field is created in the serializer that is used to display the movie in the Django project.
