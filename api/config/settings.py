@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # third party packages
     "django_filters",
     "rest_framework",
+    'django_cleanup.apps.CleanupConfig',
     # project apps
     'account.apps.AccountConfig',
     'core.apps.CoreConfig'

@@ -4,3 +4,4 @@ django
 djangorestframework
 django-filter
 django-decouple
+django-cleanup

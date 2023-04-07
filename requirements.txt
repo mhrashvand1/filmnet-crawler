@@ -35,6 +35,8 @@ django==4.2
     #   -r requirements.in
     #   django-filter
     #   djangorestframework
+django-cleanup==7.0.0
+    # via -r requirements.in
 django-decouple==2.1
     # via -r requirements.in
 django-filter==23.1

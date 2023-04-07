@@ -4,6 +4,30 @@ import hashlib
 from scrapy.utils.python import to_bytes
 from scrapy.http.request import Request, NO_CALLBACK
 from asgiref.sync import sync_to_async
+import os, sys
+from datetime import datetime
+from django.core.files.storage import default_storage
+import django
+from django.utils import timezone
+
+
+join = os.path.join
+dirname = os.path.dirname
+abspath = os.path.abspath
+
+# Append the path of the 'api' directory to the sys.path
+# This allows importing modules from the 'api' directory in the parent directory
+sys.path.append(join(dirname(abspath(__file__)), '..', '..', 'api'))
+
+# Set the 'DJANGO_SETTINGS_MODULE' environment variable to the path of the Django settings module
+os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
+
+# Call the 'setup()' function of the Django module to set up the Django environment
+django.setup()
+
+from django.db import transaction
+from core.models import Movie, Genre 
+
 
 
 class ImagesPipeline(BaseImagesPipeline):
@@ -16,7 +40,7 @@ class ImagesPipeline(BaseImagesPipeline):
     def file_path(self, request, response=None, info=None, *, item=None):
         image_guid = hashlib.sha1(to_bytes(request.url)).hexdigest()
         slug, image_type = request.meta['slug'], request.meta['image_type']
-        return f"{slug}/full/{image_type+image_guid}.jpg"
+        return f"{slug}/full/{image_type+'-'+image_guid}.jpg"
 
 
     def get_media_requests(self, item, info):
@@ -39,41 +63,55 @@ class ImagesPipeline(BaseImagesPipeline):
         ]
 
 
+
 class DBPipeline: 
    
     async def process_item(self, item, spider):
         item = ItemAdapter(item).asdict()  
-        try:
-            await sync_to_async(self.insert_data)(item)  
-        except:
-            pass
+        await sync_to_async(self.insert_data)(item)  
         return item
 
 
     def insert_data(self, item):
-        # print("\n\n", item, "\n\n")
-        pass
-        # with transaction.atomic():
-        #     page = Page.objects.get(username=item.get('username'))
-        #     source_created = datetime.strptime(
-        #         item.get("source_created"),
-        #         "%Y-%m-%d %H:%M:%S"
-        #     )
-        #     post, created = Post.objects.get_or_create(
-        #         page=page, 
-        #         source_id=item.get('source_id'),
-        #         title=item.get('title'),
-        #         text=item.get('text'),
-        #         source_created=source_created
-        #     )
-        #     if created:
-        #         # Create main media
-        #         main_media_url = item.get("media").get("main_media")
-        #         Media.objects.create(post=post, url=main_media_url, is_main=True)
-        #         # Create other media
-        #         other_media_urls = item.get("media").get("other_media")
-        #         data = [Media(post=post, url=url) for url in other_media_urls]
-        #         Media.objects.bulk_create(data)
-                
-        #     print(f"\n Post {item.get('source_id')} created successfullt. \n")
         
+        del item['image_urls']
+        genres_data = item.pop('genres')
+        images = item.pop('images')
+        cover_image_path = images[0]['path']
+        poster_image_path = images[1]['path']
+        
+        # Convert published_at to a datetime object
+        published_at = datetime.strptime(item['published_at'], '%Y-%m-%dT%H:%M:%S')
+        published_at = timezone.make_aware(published_at, timezone.utc)
+        item['published_at'] = published_at
+                                
+        with transaction.atomic():
+            
+            # Create the genres
+            genre_objects = []
+            
+            for g in genres_data:
+                genre_obj, created = Genre.objects.update_or_create(
+                    id=g.pop('id'),
+                    defaults={**g}
+                )
+                genre_objects.append(genre_obj)
+            
+            # Create the Movie
+            movie_obj, created = Movie.objects.update_or_create(
+                id=item.pop('id'),
+                defaults={**item}
+            )
+            
+            # Set the genres for movie
+            movie_obj.genres.set(genre_objects)
+            
+            # Set the cover_image and poster image
+            with default_storage.open(cover_image_path, 'rb') as f:
+                movie_obj.cover_image.save(cover_image_path, f)
+                
+            with default_storage.open(poster_image_path, 'rb') as f:
+                movie_obj.poster_image.save(poster_image_path, f)
+            
+            
+            movie_obj.save() 
