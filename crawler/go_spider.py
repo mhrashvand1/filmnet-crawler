@@ -18,7 +18,7 @@ parser.add_argument(
     type=positive_int,
     dest='film_count',
     default=100,
-    help='Number of movies to be crawled'
+    help='Number of movies to be crawled (default=100)'
 )
 
 args = parser.parse_args()
