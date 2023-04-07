@@ -15,26 +15,26 @@ class ImagesPipeline(BaseImagesPipeline):
     
     def file_path(self, request, response=None, info=None, *, item=None):
         image_guid = hashlib.sha1(to_bytes(request.url)).hexdigest()
-        movie_id, image_type = request.meta['movie_id'], request.meta['image_type']
-        return f"{movie_id}/full/{image_type+image_guid}.jpg"
+        slug, image_type = request.meta['slug'], request.meta['image_type']
+        return f"{slug}/full/{image_type+image_guid}.jpg"
 
 
     def get_media_requests(self, item, info):
     
         item = ItemAdapter(item)
         urls = item['image_urls']
-        movie_id = item['id'][0]
+        slug = item['slug']
     
         return [
             Request(
                 urls[0],
                 callback=NO_CALLBACK, 
-                meta={'movie_id':movie_id, 'image_type':'cover'}       
+                meta={'slug':slug, 'image_type':'cover'}       
             ),
             Request(
                 urls[1],
                 callback=NO_CALLBACK, 
-                meta={'movie_id':movie_id, 'image_type':'poster'}       
+                meta={'slug':slug, 'image_type':'poster'}       
             )
         ]
 
