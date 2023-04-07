@@ -1,4 +1,3 @@
-import re
 from w3lib.html import remove_comments, remove_tags
 
 
@@ -12,7 +11,8 @@ def get_genres(value):
     Getting list of the categories and return list of the genres
     """
     
-    genres = [c for c in value if c['type']=='genre'][0]['items']
+    genres = next((c for c in value if c['type']=='genre'), [])
+    genres = genres['items'] if genres else genres
     
     result = []
     for g in genres:

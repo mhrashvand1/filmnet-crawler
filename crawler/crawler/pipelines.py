@@ -40,8 +40,10 @@ class ImagesPipeline(BaseImagesPipeline):
     
     def file_path(self, request, response=None, info=None, *, item=None):
         image_guid = hashlib.sha1(to_bytes(request.url)).hexdigest()
-        slug, image_type = request.meta['slug'], request.meta['image_type']
-        return f"{slug}/full/{image_type+'-'+image_guid}.jpg"
+        slug = request.meta['slug']
+        short_id = request.meta['short_id']
+        image_type = request.meta['image_type']
+        return f"{slug+'_'+short_id}/full/{image_type+'-'+image_guid}.jpg"
 
 
     def get_media_requests(self, item, info):
@@ -49,17 +51,18 @@ class ImagesPipeline(BaseImagesPipeline):
         item = ItemAdapter(item)
         urls = item['image_urls']
         slug = item['slug']
-    
+        short_id = item['short_id']
+        
         return [
             Request(
                 urls[0],
                 callback=NO_CALLBACK, 
-                meta={'slug':slug, 'image_type':'cover'}       
+                meta={'slug':slug, 'short_id':short_id, 'image_type':'cover'}       
             ),
             Request(
                 urls[1],
                 callback=NO_CALLBACK, 
-                meta={'slug':slug, 'image_type':'poster'}       
+                meta={'slug':slug, 'short_id':short_id, 'image_type':'poster'}       
             )
         ]
 
@@ -76,11 +79,20 @@ class DBPipeline:
     def insert_data(self, item):
         
         del item['image_urls']
-        genres_data = item.pop('genres')
-        images = item.pop('images')
-        cover_image_path = images[0]['path']
-        poster_image_path = images[1]['path']
-                
+        
+        try:
+            genres_data = item.pop('genres')
+        except:
+            genres_data = []
+        
+        try:
+            images = item.pop('images')
+            cover_image_path = images[0]['path']
+            poster_image_path = images[1]['path']
+        except:
+            cover_image_path = None
+            poster_image_path = None
+                            
         # Convert published_at to a datetime object
         published_at = datetime.strptime(item['published_at'], '%Y-%m-%dT%H:%M:%S')
         published_at = timezone.make_aware(published_at, timezone.utc)
@@ -108,11 +120,13 @@ class DBPipeline:
             movie_obj.genres.set(genre_objects)
             
             # Set the cover_image and poster image
-            with open(join(IMAGES_STORE, cover_image_path), 'rb') as f:
-                movie_obj.cover_image.save(cover_image_path, File(f))
-                
-            with open(join(IMAGES_STORE, poster_image_path), 'rb') as f:
-                movie_obj.poster_image.save(poster_image_path, File(f))
+            if cover_image_path:
+                with open(join(IMAGES_STORE, cover_image_path), 'rb') as f:
+                    movie_obj.cover_image.save(cover_image_path, File(f))
+            
+            if poster_image_path:
+                with open(join(IMAGES_STORE, poster_image_path), 'rb') as f:
+                    movie_obj.poster_image.save(poster_image_path, File(f))
             
             
             movie_obj.save() 

@@ -16,14 +16,14 @@ class Movie(BaseModel):
         db_index=True,
         verbose_name=_("short id")
     )
-    slug = models.SlugField(unique=True, db_index=True, verbose_name=_("slug"))
+    slug = models.SlugField(verbose_name=_("slug"))
     title_fa = models.CharField(max_length=1000, verbose_name=_('Persian title'))
     title_en = models.CharField(max_length=1000, verbose_name=_('English title'))
     summary = models.CharField(max_length=10000, blank=True, verbose_name=_('summary'))
     published_at = models.DateTimeField(verbose_name=_('published at'))
     release_year = models.SmallIntegerField(null=True, verbose_name=_("release_year"))
-    rate_percentage = models.DecimalField(max_digits=4, decimal_places=2, null=True, verbose_name=_('rate percentage'))
-    imdb_rank_percent = models.DecimalField(max_digits=4, decimal_places=2, null=True, verbose_name=_('imdb rank percent'))
+    rate_percentage = models.FloatField(null=True, verbose_name=_('rate percentage'))
+    imdb_rank_percent = models.FloatField(null=True, verbose_name=_('imdb rank percent'))
     duration = models.CharField(max_length=10, blank=True, verbose_name=_('duration'))
     visits = models.IntegerField(null=True, verbose_name=_('visits'))
     cover_image = models.ImageField(null=True, verbose_name=_('cover image'))
@@ -35,7 +35,7 @@ class Movie(BaseModel):
         return f"https://filmnet.ir/contents/{self.short_id}/{self.slug}/"
     
     def __str__(self) -> str:
-        return str(self.slug)
+        return str(self.short_id + '-' + self.slug)
 
     class Meta:
         db_table = 'Movie'
@@ -58,7 +58,7 @@ class Genre(BaseModel):
         db_index=True,
         verbose_name=_("short id")
     )
-    slug = models.SlugField(unique=True, db_index=True, verbose_name=_("slug"))
+    slug = models.SlugField(verbose_name=_("slug"))
     title = models.CharField(max_length=1000, verbose_name=_('title'))
     body = models.CharField(max_length=10000, blank=True, verbose_name=_('body'))
 
@@ -69,7 +69,7 @@ class Genre(BaseModel):
         return self.movies.aggregate(count=models.Count('id'))['count']
     
     def __str__(self) -> str:
-        return str(self.slug)
+        return str(self.short_id + '-' + self.slug)
 
     class Meta:
         db_table = 'Genre'

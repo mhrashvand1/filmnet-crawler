@@ -20,7 +20,7 @@ class MovieViewSet(
     GenericViewSet
 ):
     
-    lookup_field = 'slug'
+    lookup_field = 'short_id'
     queryset = Movie.objects.prefetch_related('genres').all()
     serializer_class = MovieSerializer
     permission_classes = [AllowAny,]
@@ -55,7 +55,7 @@ class GenreViewSet(
     GenericViewSet
 ):
     
-    lookup_field = 'slug'
+    lookup_field = 'short_id'
     
     # Annotate movie_count to the objects (used in the filters)
     queryset = Genre.objects.prefetch_related('movies').\
