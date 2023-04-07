@@ -1,14 +1,9 @@
 import re
+from w3lib.html import remove_comments, remove_tags
 
 
-def remove_js_comments(text):
-    # Define regular expression pattern for matching JS comments
-    pattern = r'<!--(.*?)-->'
-
-    # Use re.sub() to remove JS comments from the text
-    cleaned_text = re.sub(pattern, '', text)
-
-    return cleaned_text
+def remove_nbsp(value):
+    return value.replace('&nbsp;', '')
 
 
 def get_genres(value):
@@ -26,7 +21,8 @@ def get_genres(value):
             'short_id':g['short_id'],
             'slug':g['slug'],
             'title':g['title'],
-            'body':remove_js_comments(g['body'])
+            'body':remove_comments(remove_tags(remove_nbsp(g['body'])))
         })
     
     return result
+

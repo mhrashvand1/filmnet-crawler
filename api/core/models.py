@@ -31,8 +31,7 @@ class Movie(BaseModel):
     genres = models.ManyToManyField(to='Genre', related_name='movies', verbose_name=_('genres'))
 
 
-    @property
-    def filmnet_link(self):
+    def get_filmnet_link(self):
         return f"https://filmnet.ir/contents/{self.short_id}/{self.slug}/"
     
     def __str__(self) -> str:
@@ -63,9 +62,11 @@ class Genre(BaseModel):
     title = models.CharField(max_length=1000, verbose_name=_('title'))
     body = models.CharField(max_length=10000, blank=True, verbose_name=_('body'))
 
-    @property
-    def filmnet_link(self):
+    def get_filmnet_link(self):
         return f"https://filmnet.ir/categories/{self.short_id}/{self.slug}"
+    
+    def get_movie_count(self):
+        return self.movies.aggregate(count=models.Count('id'))['count']
     
     def __str__(self) -> str:
         return str(self.slug)

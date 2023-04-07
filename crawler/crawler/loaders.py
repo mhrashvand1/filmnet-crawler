@@ -1,9 +1,8 @@
 from itemloaders.processors import MapCompose, TakeFirst
 from scrapy.loader import ItemLoader
 from crawler.items import MovieItem
-from crawler.processors import get_genres
-from w3lib.html import remove_tags
-
+from crawler.processors import get_genres, remove_nbsp
+from w3lib.html import remove_tags, remove_comments
 
 
 class MovieLoader(ItemLoader):
@@ -12,7 +11,7 @@ class MovieLoader(ItemLoader):
     
     # Input processors
     genres_in = get_genres
-    summary_in = MapCompose(remove_tags)
+    summary_in = MapCompose(remove_tags, remove_comments, remove_nbsp)
     
     # Output processors
     id_out = TakeFirst()
