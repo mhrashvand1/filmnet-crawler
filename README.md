@@ -16,7 +16,6 @@ After installing requirements:
   
 ``` shell
 cd api/ 
-./manage.py makemigrations   
 ./manage.py migrate   
 ./manage.py runserver  
 ```
