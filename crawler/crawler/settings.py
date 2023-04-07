@@ -69,7 +69,7 @@ ITEM_PIPELINES = {
    "crawler.pipelines.DBPipeline": 300,
 }
 
-IMAGES_STORE = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..','media')
+IMAGES_STORE = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..','scrapy_media')
 
 
 # Enable and configure the AutoThrottle extension (disabled by default)

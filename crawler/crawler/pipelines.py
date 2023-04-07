@@ -6,9 +6,10 @@ from scrapy.http.request import Request, NO_CALLBACK
 from asgiref.sync import sync_to_async
 import os, sys
 from datetime import datetime
-from django.core.files.storage import default_storage
 import django
 from django.utils import timezone
+from django.core.files import File
+from crawler.settings import IMAGES_STORE
 
 
 join = os.path.join
@@ -79,7 +80,7 @@ class DBPipeline:
         images = item.pop('images')
         cover_image_path = images[0]['path']
         poster_image_path = images[1]['path']
-        
+                
         # Convert published_at to a datetime object
         published_at = datetime.strptime(item['published_at'], '%Y-%m-%dT%H:%M:%S')
         published_at = timezone.make_aware(published_at, timezone.utc)
@@ -107,11 +108,11 @@ class DBPipeline:
             movie_obj.genres.set(genre_objects)
             
             # Set the cover_image and poster image
-            with default_storage.open(cover_image_path, 'rb') as f:
-                movie_obj.cover_image.save(cover_image_path, f)
+            with open(join(IMAGES_STORE, cover_image_path), 'rb') as f:
+                movie_obj.cover_image.save(cover_image_path, File(f))
                 
-            with default_storage.open(poster_image_path, 'rb') as f:
-                movie_obj.poster_image.save(poster_image_path, f)
+            with open(join(IMAGES_STORE, poster_image_path), 'rb') as f:
+                movie_obj.poster_image.save(poster_image_path, File(f))
             
             
             movie_obj.save() 

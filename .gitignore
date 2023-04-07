@@ -130,3 +130,5 @@ dmypy.json
 
 # Media directory
 media
+django_media
+scrapy_media
